@@ -1,0 +1,155 @@
+[
+  {
+    "id": "VULN-001",
+    "file": "settings.py",
+    "line": 23,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Credentials",
+    "description": "Hardcoded Django SECRET_KEY in settings"
+  },
+  {
+    "id": "VULN-002",
+    "file": "settings.py",
+    "line": 179,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Credentials",
+    "description": "Hardcoded SECRET_COOKIE_KEY in settings"
+  },
+  {
+    "id": "VULN-003",
+    "file": "views.py",
+    "line": 241,
+    "cwe": "CWE-330",
+    "type": "Weak Cryptography",
+    "description": "Use of insufficiently random values for security purposes"
+  },
+  {
+    "id": "VULN-004",
+    "file": "app.py",
+    "line": 48,
+    "cwe": "CWE-259",
+    "type": "Hardcoded Password",
+    "description": "Hardcoded user password in BOPLA lab"
+  },
+  {
+    "id": "VULN-005",
+    "file": "app.py",
+    "line": 50,
+    "cwe": "CWE-259",
+    "type": "Hardcoded Password",
+    "description": "Hardcoded admin password in BOPLA lab"
+  },
+  {
+    "id": "VULN-006",
+    "file": "app.py",
+    "line": 152,
+    "cwe": "CWE-94",
+    "type": "Code Execution / Misconfiguration",
+    "description": "Flask app run with debug=True in BOPLA lab"
+  },
+  {
+    "id": "VULN-007",
+    "file": "app.py",
+    "line": 5,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Secret Key",
+    "description": "Hardcoded secret key in business logic lab"
+  },
+  {
+    "id": "VULN-008",
+    "file": "app.py",
+    "line": 200,
+    "cwe": "CWE-94",
+    "type": "Code Execution / Misconfiguration",
+    "description": "Flask app run with debug=True in business logic lab"
+  },
+  {
+    "id": "VULN-009",
+    "file": "app.py",
+    "line": 15,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Secret Key",
+    "description": "Hardcoded secret key in security headers lab"
+  },
+  {
+    "id": "VULN-010",
+    "file": "app.py",
+    "line": 20,
+    "cwe": "CWE-259",
+    "type": "Hardcoded Password",
+    "description": "Hardcoded user password in security headers lab"
+  },
+  {
+    "id": "VULN-011",
+    "file": "app.py",
+    "line": 233,
+    "cwe": "CWE-94",
+    "type": "Code Execution / Misconfiguration",
+    "description": "Flask app run with debug=True in security headers lab"
+  },
+  {
+    "id": "VULN-012",
+    "file": "app.py",
+    "line": 7,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Secret Key",
+    "description": "Hardcoded secret key in SQL injection lab"
+  },
+  {
+    "id": "VULN-013",
+    "file": "app.py",
+    "line": 27,
+    "cwe": "CWE-259",
+    "type": "Hardcoded Password",
+    "description": "Hardcoded MD5 hash/password for admin in SQL injection lab"
+  },
+  {
+    "id": "VULN-014",
+    "file": "app.py",
+    "line": 51,
+    "cwe": "CWE-89",
+    "type": "SQL Injection",
+    "description": "Unsanitized SQL query string concatenation in SQL injection lab"
+  },
+  {
+    "id": "VULN-015",
+    "file": "app.py",
+    "line": 76,
+    "cwe": "CWE-94",
+    "type": "Code Execution / Misconfiguration",
+    "description": "Flask app run with debug=True in SQL injection lab"
+  },
+  {
+    "id": "VULN-016",
+    "file": "app.py",
+    "line": 6,
+    "cwe": "CWE-798",
+    "type": "Hardcoded Secret Key",
+    "description": "Hardcoded secret key in command injection lab"
+  },
+  {
+    "id": "VULN-017",
+    "file": "app.py",
+    "line": 29,
+    "cwe": "CWE-78",
+    "type": "Command Injection",
+    "description": "Command injection via subprocess.Popen shell=True"
+  },
+  {
+    "id": "VULN-018",
+    "file": "app.py",
+    "line": 49,
+    "cwe": "CWE-94",
+    "type": "Code Execution",
+    "description": "Code injection via vulnerable eval expression"
+  },
+  {
+    "id": "VULN-019",
+    "file": "app.py",
+    "line": 60,
+    "cwe": "CWE-94",
+    "type": "Code Execution / Misconfiguration",
+    "description": "Flask app run with debug=True in command injection lab"
+  }
+]
+

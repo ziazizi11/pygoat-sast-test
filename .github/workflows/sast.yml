@@ -1,6 +1,8 @@
 name: SAST Evaluation Pipeline (4 Tools)
 
 on:
+  push:
+    branches: [main, master]
   workflow_dispatch:
 
 jobs:
@@ -57,7 +59,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           npx sonarqube-scanner \
-            -Dsonar.projectKey=spk-gizi-vulnerable \
+            -Dsonar.projectKey=pygoat \
             -Dsonar.sources=. \
             -Dsonar.exclusions=**/templates/**,**/scripts/** \
             -Dsonar.sarif.reportPaths=sonarqube-results.json || true
