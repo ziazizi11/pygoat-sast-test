@@ -1,0 +1,68 @@
+name: SAST Evaluation Pipeline (4 Tools)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sast_scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # --- TOOL 1: SEMGREP ---
+      - name: Run Semgrep
+        run: |
+          pip install semgrep
+          semgrep scan --config=auto --sarif --output=semgrep-results.json . || true
+
+      # --- TOOL 2: BANDIT ---
+      - name: Run Bandit
+        run: |
+          pip install bandit
+          bandit -r . -f json -o bandit-results.json || true
+
+      # --- TOOL 3: CODEQL ---
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'python'
+          output: 'codeql-results'
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          output: 'codeql-results'
+
+      - name: Copy CodeQL Result
+        run: |
+          cp codeql-results/python.sarif codeql-results.sarif || cp ../results/python.sarif codeql-results.sarif || true
+
+      # --- TOOL 4: SONARQUBE / SONARSCANNER ---
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          npx sonarqube-scanner \
+            -Dsonar.projectKey=spk-gizi-vulnerable \
+            -Dsonar.sources=. \
+            -Dsonar.exclusions=**/templates/**,**/scripts/** \
+            -Dsonar.sarif.reportPaths=sonarqube-results.json || true
+
+      # --- EVALUASI OTOMATIS CONFUSION MATRIX ---
+      - name: Run Evaluation Script
+        run: |
+          python scripts/evaluate.py --mode 4
