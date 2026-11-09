@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-Evaluation Script for SAST Benchmark Experiment on PyGoat
+Evaluation Script for SAST Benchmark Experiment on PyGoat (15 Scenarios)
 Thesis: Analisis Komparatif Efektivitas Alat SAST Tunggal dan Kombinasi Multi-Tools
         terhadap Akurasi Penilaian Keamanan Perangkat Lunak Python
 
-Calculates:
-1. Confusion Matrix (TP, FP, FN, Precision, Recall, F1-Score) for 15 Scenarios (A, B, C, D)
-2. Breakdown by Severity (Critical, High, Medium, Low)
-3. Breakdown by Vulnerability Type (SQLi, Command Injection, Hardcoded Secrets, etc.)
-4. Full Ground Truth Detection Matrix (19 items with tool-by-tool detection status)
+Focus:
+- Evaluasi Kinerja Confusion Matrix (TP, FP, FN, Precision, Recall, F1-Score)
+- 15 Skenario Kombinasi (Skenario A, B, C, D)
 """
 
 import csv
@@ -27,7 +25,6 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GROUND_TRUTH_FILE = os.path.join(PROJECT_ROOT, "ground_truth.json")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "sast-results")
 OUTPUT_CSV = os.path.join(PROJECT_ROOT, "sast_evaluation_summary.csv")
-BREAKDOWN_CSV = os.path.join(PROJECT_ROOT, "sast_vulnerability_breakdown.csv")
 
 ALL_TOOLS = [
     "bandit",
@@ -36,7 +33,6 @@ ALL_TOOLS = [
     "codeql"
 ]
 
-# Display names avoiding GitHub secret masking on 'Bearer +'
 TOOL_DISPLAY_NAMES = {
     "bandit": "Bandit",
     "semgrep": "Semgrep",
@@ -113,7 +109,7 @@ class SASTParser:
 
     @staticmethod
     def parse_sarif(filepath: str, tool_name: str) -> List[Dict]:
-        """Generic SARIF parser for CodeQL, Snyk, DevSkim, etc."""
+        """Generic SARIF parser for CodeQL and other SARIF tools."""
         findings = []
         data = SASTParser._safe_load_json(filepath)
         if not data:
@@ -206,8 +202,8 @@ def is_matching(finding: Dict, gt: Dict, line_tolerance: int = 5) -> bool:
     return min_line <= f_line <= max_line
 
 
-def evaluate_findings(findings: List[Dict], ground_truth: List[Dict]) -> Tuple[int, int, int, float, float, float, Set[str]]:
-    """Compute TP, FP, FN, Precision, Recall, F1-Score and set of detected GT IDs."""
+def evaluate_findings(findings: List[Dict], ground_truth: List[Dict]) -> Tuple[int, int, int, float, float, float]:
+    """Compute TP, FP, FN, Precision, Recall, and F1-Score."""
     detected_gt_ids: Set[str] = set()
     tp_findings_indices: Set[int] = set()
 
@@ -225,7 +221,7 @@ def evaluate_findings(findings: List[Dict], ground_truth: List[Dict]) -> Tuple[i
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
     f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
 
-    return tp, fp, fn, precision, recall, f1, detected_gt_ids
+    return tp, fp, fn, precision, recall, f1
 
 
 def main():
@@ -241,15 +237,11 @@ def main():
 
     # 1. Collect findings for individual tools
     tools_findings: Dict[str, List[Dict]] = {}
-    tool_detected_gt: Dict[str, Set[str]] = {}
-
     print("\n[*] Loading scan outputs from:", RESULTS_DIR)
     for tool in ALL_TOOLS:
         f_list = load_tool_findings(tool)
         tools_findings[tool] = f_list
-        _, _, _, _, _, _, detected_ids = evaluate_findings(f_list, gt_data)
-        tool_detected_gt[tool] = detected_ids
-        status = f"{len(f_list)} raw findings, {len(detected_ids)}/{len(gt_data)} TP detected" if f_list else "0 findings"
+        status = f"{len(f_list)} findings" if f_list else "Not found / 0 findings"
         print(f"    - {TOOL_DISPLAY_NAMES[tool].ljust(12)}: {status}")
 
     # 2. Compute 15 Scenarios
@@ -271,7 +263,7 @@ def main():
             for t in combo:
                 combined_findings.extend(tools_findings[t])
 
-            tp, fp, fn, prec, rec, f1, _ = evaluate_findings(combined_findings, gt_data)
+            tp, fp, fn, prec, rec, f1 = evaluate_findings(combined_findings, gt_data)
             records.append({
                 "scenario_id": f"SCN-{scenario_counter:03d}",
                 "scenario_name": scenario_name,
@@ -283,10 +275,7 @@ def main():
                 "FN": fn,
                 "Precision (%)": f"{prec * 100:.2f}%",
                 "Recall (%)": f"{rec * 100:.2f}%",
-                "F1_Score (%)": f"{f1 * 100:.2f}%",
-                "_prec_num": prec,
-                "_rec_num": rec,
-                "_f1_num": f1
+                "F1_Score (%)": f"{f1 * 100:.2f}%"
             })
             scenario_counter += 1
 
@@ -308,130 +297,24 @@ def main():
         writer.writeheader()
         writer.writerows(records)
 
-    # 3. Breakdown by Severity (Critical, High, Medium, Low)
-    severity_order = ["Critical", "High", "Medium", "Low"]
-    severity_counts: Dict[str, Dict] = {s: {"total": 0, "bandit": 0, "semgrep": 0, "bearer": 0, "codeql": 0, "all": 0} for s in severity_order}
+    print(f"\n[+] Successfully evaluated {len(records)} scenarios!")
+    print(f"[+] Full results exported to: {OUTPUT_CSV}")
 
-    for item in gt_data:
-        sev = item.get("severity", "Medium")
-        if sev not in severity_counts:
-            severity_counts[sev] = {"total": 0, "bandit": 0, "semgrep": 0, "bearer": 0, "codeql": 0, "all": 0}
-        severity_counts[sev]["total"] += 1
-        item_id = item["id"]
-
-        is_any_detected = False
-        for tool in ALL_TOOLS:
-            if item_id in tool_detected_gt.get(tool, set()):
-                severity_counts[sev][tool] += 1
-                is_any_detected = True
-        if is_any_detected:
-            severity_counts[sev]["all"] += 1
-
-    # 4. Breakdown by Vulnerability Type
-    type_counts: Dict[str, Dict] = {}
-    for item in gt_data:
-        v_type = item.get("type", "Unknown")
-        cwe = item.get("cwe", "")
-        key = f"{v_type} ({cwe})" if cwe else v_type
-        if key not in type_counts:
-            type_counts[key] = {"total": 0, "severity": item.get("severity", "Medium"), "bandit": 0, "semgrep": 0, "bearer": 0, "codeql": 0, "all": 0}
-        type_counts[key]["total"] += 1
-        item_id = item["id"]
-
-        is_any_detected = False
-        for tool in ALL_TOOLS:
-            if item_id in tool_detected_gt.get(tool, set()):
-                type_counts[key][tool] += 1
-                is_any_detected = True
-        if is_any_detected:
-            type_counts[key]["all"] += 1
-
-    # Export Breakdown Details CSV
-    breakdown_rows = []
-    for item in gt_data:
-        b_det = "YES" if item["id"] in tool_detected_gt["bandit"] else "NO"
-        s_det = "YES" if item["id"] in tool_detected_gt["semgrep"] else "NO"
-        br_det = "YES" if item["id"] in tool_detected_gt["bearer"] else "NO"
-        c_det = "YES" if item["id"] in tool_detected_gt["codeql"] else "NO"
-        any_det = "YES" if (b_det == "YES" or s_det == "YES" or br_det == "YES" or c_det == "YES") else "NO"
-
-        breakdown_rows.append({
-            "id": item["id"],
-            "type": item["type"],
-            "severity": item.get("severity", "Medium"),
-            "cwe": item["cwe"],
-            "file": item["file"],
-            "line": item["line"],
-            "Bandit": b_det,
-            "Semgrep": s_det,
-            "Bearer_CLI": br_det,
-            "CodeQL": c_det,
-            "Status_Deteksi": "TERDETEKSI" if any_det == "YES" else "LOLOS (FN)",
-            "description": item["description"]
-        })
-
-    with open(BREAKDOWN_CSV, "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = [
-            "id", "type", "severity", "cwe", "file", "line",
-            "Bandit", "Semgrep", "Bearer_CLI", "CodeQL", "Status_Deteksi", "description"
-        ]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(breakdown_rows)
-
-    # -------------------------------------------------------------
-    # BUILD MARKDOWN SUMMARY (Without asterisks in table cells)
-    # -------------------------------------------------------------
-    summary_md = "## 📊 Laporan Lengkap Evaluasi SAST (PyGoat - 4 Tools)\n\n"
-    summary_md += f"**Total Kerentanan Ground Truth:** {len(gt_data)} celah\n\n"
-
-    # Tabel 1: Evaluasi 15 Skenario
-    summary_md += "### 1. Evaluasi Kinerja 15 Skenario (A, B, C, D)\n\n"
+    # 3. Generate Clean Markdown Summary (ONLY 15 SCENARIOS TABLE)
+    summary_md = "## 📊 Ringkasan Evaluasi Kinerja SAST (4 Tools - PyGoat)\n\n"
+    summary_md += f"**Total Ground Truth Vulnerabilities:** {len(gt_data)} celah\n\n"
     summary_md += "| Skenario Pengujian | TP | FP | FN | Precision (%) | Recall (%) | F1-Score (%) |\n"
     summary_md += "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n"
+
     for r in records:
-        # NO asterisks in cells
         summary_md += f"| {r['scenario_name']} | {r['TP']} | {r['FP']} | {r['FN']} | {r['Precision (%)']} | {r['Recall (%)']} | {r['F1_Score (%)']} |\n"
 
-    # Tabel 2: Breakdown Kategori Severity
-    summary_md += "\n### 2. Ringkasan Deteksi Berdasarkan Tingkat Keparahan (Severity)\n\n"
-    summary_md += "| Tingkat Keparahan | Total Celah | Bandit | Semgrep | Bearer-CLI | CodeQL | Terdeteksi Gabungan | Persentase Terdeteksi |\n"
-    summary_md += "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n"
-    for sev in severity_order:
-        data = severity_counts.get(sev, {"total": 0, "bandit": 0, "semgrep": 0, "bearer": 0, "codeql": 0, "all": 0})
-        if data["total"] > 0:
-            pct = (data["all"] / data["total"]) * 100
-            summary_md += f"| {sev} | {data['total']} | {data['bandit']} | {data['semgrep']} | {data['bearer']} | {data['codeql']} | {data['all']} | {pct:.1f}% |\n"
+    print("\n" + summary_md)
 
-    # Tabel 3: Breakdown Jenis Kerentanan
-    summary_md += "\n### 3. Ringkasan Deteksi Berdasarkan Jenis Kerentanan (CWE)\n\n"
-    summary_md += "| Jenis Kerentanan | Severity | Total Celah | Bandit | Semgrep | Bearer-CLI | CodeQL | Terdeteksi Gabungan |\n"
-    summary_md += "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n"
-    for k_type, data in type_counts.items():
-        summary_md += f"| {k_type} | {data['severity']} | {data['total']} | {data['bandit']} | {data['semgrep']} | {data['bearer']} | {data['codeql']} | {data['all']} / {data['total']} |\n"
-
-    # Tabel 4: Rincian 19 Celah Ground Truth
-    summary_md += "\n### 4. Rincian 19 Celah Ground Truth & Status Deteksi Alat\n\n"
-    summary_md += "| ID | File : Baris | Jenis Kerentanan | Severity | Bandit | Semgrep | Bearer-CLI | CodeQL | Status |\n"
-    summary_md += "| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n"
-    for r in breakdown_rows:
-        b_icon = "✔" if r["Bandit"] == "YES" else "✖"
-        s_icon = "✔" if r["Semgrep"] == "YES" else "✖"
-        br_icon = "✔" if r["Bearer_CLI"] == "YES" else "✖"
-        c_icon = "✔" if r["CodeQL"] == "YES" else "✖"
-        status_text = "Terdeteksi" if r["Status_Deteksi"] == "TERDETEKSI" else "Lolos (FN)"
-        summary_md += f"| {r['id']} | {r['file']}:{r['line']} | {r['type']} | {r['severity']} | {b_icon} | {s_icon} | {br_icon} | {c_icon} | {status_text} |\n"
-
-    # Print to console
-    print(summary_md)
-
-    # Output to GitHub Step Summary if in GitHub Actions
+    # Output to GitHub Step Summary
     if "GITHUB_STEP_SUMMARY" in os.environ:
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
             f.write(summary_md)
-
-    print(f"\n[+] Full 15 Scenarios exported to: {OUTPUT_CSV}")
-    print(f"[+] Detailed Vulnerability Breakdown exported to: {BREAKDOWN_CSV}")
 
 
 if __name__ == "__main__":

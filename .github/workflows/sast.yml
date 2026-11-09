@@ -1,4 +1,4 @@
-name: SAST Multi-Tool Benchmark (4 Tools - PyGoat)
+name: SAST Performance Benchmark (15 Scenarios)
 
 on:
   push:
@@ -85,7 +85,7 @@ jobs:
       # ----------------------------------------------------
       # EVALUATION: Compute TP, FP, FN, Precision, Recall, F1 for 15 Combinations
       # ----------------------------------------------------
-      - name: Run Evaluation Script
+      - name: Run Evaluation Script (15 Scenarios)
         run: |
           python scripts/evaluate.py
 
@@ -99,5 +99,4 @@ jobs:
           name: sast-evaluation-results
           path: |
             sast_evaluation_summary.csv
-            sast_vulnerability_breakdown.csv
             sast-results/
