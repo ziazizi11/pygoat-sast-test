@@ -310,12 +310,24 @@ def main():
     # 2. Compute 15 Scenarios
     records = []
     scenario_counter = 1
+    scenario_letters = {1: "Skenario A", 2: "Skenario B", 3: "Skenario C", 4: "Skenario D"}
+
+    def format_tool_name(t: str) -> str:
+        if t.lower() == "codeql":
+            return "CodeQL"
+        return t.capitalize()
 
     print(f"\n[*] Generating and evaluating 15 Combinations (k=1..4)...")
 
     for k in range(1, len(ALL_TOOLS) + 1):
+        letter = scenario_letters[k]
         for combo in combinations(ALL_TOOLS, k):
-            combo_name = "+".join(combo)
+            tool_display = " + ".join(format_tool_name(t) for t in combo)
+            if k == len(ALL_TOOLS):
+                scenario_name = f"{letter} - {tool_display} (Semua Tools)"
+            else:
+                scenario_name = f"{letter} - {tool_display}"
+
             # Combine findings (Union strategy)
             combined_findings = []
             for t in combo:
@@ -324,8 +336,9 @@ def main():
             tp, fp, fn, prec, rec, f1 = evaluate_findings(combined_findings, gt_data)
             records.append({
                 "scenario_id": f"SCN-{scenario_counter:03d}",
+                "scenario_name": scenario_name,
                 "k_tools": k,
-                "tool_combination": combo_name,
+                "tool_combination": "+".join(combo),
                 "total_findings": len(combined_findings),
                 "TP": tp,
                 "FP": fp,
@@ -343,6 +356,7 @@ def main():
     with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = [
             "scenario_id",
+            "scenario_name",
             "k_tools",
             "tool_combination",
             "total_findings",
@@ -360,30 +374,31 @@ def main():
     print(f"[+] Successfully evaluated {len(records)} scenarios!")
     print(f"[+] Full results exported to: {OUTPUT_CSV}")
 
-    # 4. Display Single Tool Performance
+    # 4. Generate Markdown Summary Table for GitHub Step Summary & Terminal
     summary_md = f"### 📊 Ringkasan Evaluasi Kinerja SAST (4 Tools - PyGoat)\n"
     summary_md += f"**Total Ground Truth Vulnerabilities:** {len(gt_data)}\n\n"
-    summary_md += "| Tool / Skenario | TP | FP | FN | Precision (%) | Recall (%) | F1-Score (%) |\n"
+    summary_md += "| Skenario Pengujian | TP | FP | FN | Precision (%) | Recall (%) | F1-Score (%) |\n"
     summary_md += "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n"
 
-    print("\n" + "=" * 75)
-    print("RESULTS: SINGLE TOOLS EVALUATION (k=1)")
-    print("=" * 75)
-    print(f"{'Tool':<12} | {'TP':<4} | {'FP':<4} | {'FN':<4} | {'Precision':<11} | {'Recall':<10} | {'F1-Score':<10}")
-    print("-" * 75)
-    for r in records[:4]:
-        print(f"{r['tool_combination']:<12} | {r['TP']:<4} | {r['FP']:<4} | {r['FN']:<4} | {r['Precision (%)']:<11} | {r['Recall (%)']:<10} | {r['F1_Score (%)']:<10}")
-        summary_md += f"| **{r['tool_combination']}** | {r['TP']} | {r['FP']} | {r['FN']} | {r['Precision (%)']} | {r['Recall (%)']} | **{r['F1_Score (%)']}** |\n"
+    print("\n" + "=" * 90)
+    print("RESULTS: ALL 15 SCENARIOS EVALUATION (SKENARIO A, B, C, D)")
+    print("=" * 90)
+    print(f"{'Skenario Pengujian':<42} | {'TP':<4} | {'FP':<4} | {'FN':<4} | {'Precision':<11} | {'Recall':<10} | {'F1-Score':<10}")
+    print("-" * 90)
+    for r in records:
+        print(f"{r['scenario_name']:<42} | {r['TP']:<4} | {r['FP']:<4} | {r['FN']:<4} | {r['Precision (%)']:<11} | {r['Recall (%)']:<10} | {r['F1_Score (%)']:<10}")
+        summary_md += f"| **{r['scenario_name']}** | {r['TP']} | {r['FP']} | {r['FN']} | {r['Precision (%)']} | {r['Recall (%)']} | **{r['F1_Score (%)']}** |\n"
 
     # 5. Display Top 5 Highest F1-Score Combinations
     records_sorted = sorted(records, key=lambda x: (x["_f1_num"], x["_rec_num"], -x["FP"]), reverse=True)
-    print("\n" + "=" * 75)
+    print("\n" + "=" * 90)
     print("RESULTS: TOP 5 HIGHEST F1-SCORE COMBINATIONS")
-    print("=" * 75)
-    print(f"{'Rank':<5} | {'k':<3} | {'Combination':<35} | {'Prec':<8} | {'Rec':<8} | {'F1':<8}")
-    print("-" * 75)
+    print("=" * 90)
+    print(f"{'Rank':<5} | {'k':<3} | {'Skenario':<42} | {'Prec':<8} | {'Rec':<8} | {'F1':<8}")
+    print("-" * 90)
     for rank, r in enumerate(records_sorted[:5], 1):
-        print(f"#{rank:<4} | {r['k_tools']:<3} | {r['tool_combination'][:35]:<35} | {r['Precision (%)']:<8} | {r['Recall (%)']:<8} | {r['F1_Score (%)']:<8}")
+        print(f"#{rank:<4} | {r['k_tools']:<3} | {r['scenario_name'][:42]:<42} | {r['Precision (%)']:<8} | {r['Recall (%)']:<8} | {r['F1_Score (%)']:<8}")
+    print("=" * 90)
 
     # Output to GITHUB_STEP_SUMMARY if available
     if "GITHUB_STEP_SUMMARY" in os.environ:
