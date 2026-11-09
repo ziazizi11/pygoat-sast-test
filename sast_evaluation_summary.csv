@@ -1,16 +1,16 @@
-scenario_id,scenario_name,k_tools,tool_combination,total_findings,TP,FP,FN,Precision (%),Recall (%),F1_Score (%)
-SCN-001,Skenario A - Bandit,1,bandit,0,0,0,19,0.00%,0.00%,0.00%
-SCN-002,Skenario A - Semgrep,1,semgrep,0,0,0,19,0.00%,0.00%,0.00%
-SCN-003,Skenario A - Bearer,1,bearer,0,0,0,19,0.00%,0.00%,0.00%
-SCN-004,Skenario A - CodeQL,1,codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-005,Skenario B - Bandit + Semgrep,2,bandit+semgrep,0,0,0,19,0.00%,0.00%,0.00%
-SCN-006,Skenario B - Bandit + Bearer,2,bandit+bearer,0,0,0,19,0.00%,0.00%,0.00%
-SCN-007,Skenario B - Bandit + CodeQL,2,bandit+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-008,Skenario B - Semgrep + Bearer,2,semgrep+bearer,0,0,0,19,0.00%,0.00%,0.00%
-SCN-009,Skenario B - Semgrep + CodeQL,2,semgrep+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-010,Skenario B - Bearer + CodeQL,2,bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-011,Skenario C - Bandit + Semgrep + Bearer,3,bandit+semgrep+bearer,0,0,0,19,0.00%,0.00%,0.00%
-SCN-012,Skenario C - Bandit + Semgrep + CodeQL,3,bandit+semgrep+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-013,Skenario C - Bandit + Bearer + CodeQL,3,bandit+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-014,Skenario C - Semgrep + Bearer + CodeQL,3,semgrep+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
-SCN-015,Skenario D - Bandit + Semgrep + Bearer + CodeQL (Semua Tools),4,bandit+semgrep+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
+scenario_id,scenario_name,k_tools,total_findings,TP,FP,FN,Precision (%),Recall (%),F1_Score (%)
+SCN-001,Skenario A - Bandit,1,0,0,0,19,0.00%,0.00%,0.00%
+SCN-002,Skenario A - Semgrep,1,0,0,0,19,0.00%,0.00%,0.00%
+SCN-003,Skenario A - Bearer-CLI,1,0,0,0,19,0.00%,0.00%,0.00%
+SCN-004,Skenario A - CodeQL,1,0,0,0,19,0.00%,0.00%,0.00%
+SCN-005,Skenario B - Bandit + Semgrep,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-006,Skenario B - Bandit + Bearer-CLI,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-007,Skenario B - Bandit + CodeQL,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-008,Skenario B - Semgrep + Bearer-CLI,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-009,Skenario B - Semgrep + CodeQL,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-010,Skenario B - Bearer-CLI + CodeQL,2,0,0,0,19,0.00%,0.00%,0.00%
+SCN-011,Skenario C - Bandit + Semgrep + Bearer-CLI,3,0,0,0,19,0.00%,0.00%,0.00%
+SCN-012,Skenario C - Bandit + Semgrep + CodeQL,3,0,0,0,19,0.00%,0.00%,0.00%
+SCN-013,Skenario C - Bandit + Bearer-CLI + CodeQL,3,0,0,0,19,0.00%,0.00%,0.00%
+SCN-014,Skenario C - Semgrep + Bearer-CLI + CodeQL,3,0,0,0,19,0.00%,0.00%,0.00%
+SCN-015,Skenario D - Bandit + Semgrep + Bearer-CLI + CodeQL (Semua Tools),4,0,0,0,19,0.00%,0.00%,0.00%

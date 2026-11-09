@@ -99,4 +99,5 @@ jobs:
           name: sast-evaluation-results
           path: |
             sast_evaluation_summary.csv
+            sast_vulnerability_breakdown.csv
             sast-results/

@@ -5,6 +5,7 @@
     "line": 23,
     "cwe": "CWE-798",
     "type": "Hardcoded Credentials",
+    "severity": "High",
     "description": "Hardcoded Django SECRET_KEY in settings"
   },
   {
@@ -13,6 +14,7 @@
     "line": 179,
     "cwe": "CWE-798",
     "type": "Hardcoded Credentials",
+    "severity": "High",
     "description": "Hardcoded SECRET_COOKIE_KEY in settings"
   },
   {
@@ -21,6 +23,7 @@
     "line": 241,
     "cwe": "CWE-330",
     "type": "Weak Cryptography",
+    "severity": "Medium",
     "description": "Use of insufficiently random values for security purposes"
   },
   {
@@ -29,6 +32,7 @@
     "line": 48,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
+    "severity": "High",
     "description": "Hardcoded user password in BOPLA lab"
   },
   {
@@ -37,6 +41,7 @@
     "line": 50,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
+    "severity": "High",
     "description": "Hardcoded admin password in BOPLA lab"
   },
   {
@@ -44,7 +49,8 @@
     "file": "challenge/labs/bopla_lab/app.py",
     "line": 152,
     "cwe": "CWE-94",
-    "type": "Code Execution / Misconfiguration",
+    "type": "Security Misconfiguration",
+    "severity": "Medium",
     "description": "Flask app run with debug=True in BOPLA lab"
   },
   {
@@ -53,6 +59,7 @@
     "line": 5,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
+    "severity": "High",
     "description": "Hardcoded secret key in business logic lab"
   },
   {
@@ -60,7 +67,8 @@
     "file": "challenge/labs/business_logic_lab/app.py",
     "line": 200,
     "cwe": "CWE-94",
-    "type": "Code Execution / Misconfiguration",
+    "type": "Security Misconfiguration",
+    "severity": "Medium",
     "description": "Flask app run with debug=True in business logic lab"
   },
   {
@@ -69,6 +77,7 @@
     "line": 15,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
+    "severity": "High",
     "description": "Hardcoded secret key in security headers lab"
   },
   {
@@ -77,6 +86,7 @@
     "line": 20,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
+    "severity": "High",
     "description": "Hardcoded user password in security headers lab"
   },
   {
@@ -84,7 +94,8 @@
     "file": "challenge/labs/security_headers_lab/app.py",
     "line": 233,
     "cwe": "CWE-94",
-    "type": "Code Execution / Misconfiguration",
+    "type": "Security Misconfiguration",
+    "severity": "Medium",
     "description": "Flask app run with debug=True in security headers lab"
   },
   {
@@ -93,6 +104,7 @@
     "line": 7,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
+    "severity": "High",
     "description": "Hardcoded secret key in SQL injection lab"
   },
   {
@@ -101,6 +113,7 @@
     "line": 27,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
+    "severity": "High",
     "description": "Hardcoded MD5 hash/password for admin in SQL injection lab"
   },
   {
@@ -109,6 +122,7 @@
     "line": 51,
     "cwe": "CWE-89",
     "type": "SQL Injection",
+    "severity": "Critical",
     "description": "Unsanitized SQL query string concatenation in SQL injection lab"
   },
   {
@@ -116,7 +130,8 @@
     "file": "dockerized_labs/sql_injection_lab/app.py",
     "line": 76,
     "cwe": "CWE-94",
-    "type": "Code Execution / Misconfiguration",
+    "type": "Security Misconfiguration",
+    "severity": "Medium",
     "description": "Flask app run with debug=True in SQL injection lab"
   },
   {
@@ -125,6 +140,7 @@
     "line": 6,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
+    "severity": "High",
     "description": "Hardcoded secret key in command injection lab"
   },
   {
@@ -133,6 +149,7 @@
     "line": 29,
     "cwe": "CWE-78",
     "type": "Command Injection",
+    "severity": "Critical",
     "description": "Command injection via subprocess.Popen shell=True"
   },
   {
@@ -140,7 +157,8 @@
     "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 49,
     "cwe": "CWE-94",
-    "type": "Code Execution",
+    "type": "Code Execution (eval)",
+    "severity": "Critical",
     "description": "Code injection via vulnerable eval expression"
   },
   {
@@ -148,7 +166,8 @@
     "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 60,
     "cwe": "CWE-94",
-    "type": "Code Execution / Misconfiguration",
+    "type": "Security Misconfiguration",
+    "severity": "Medium",
     "description": "Flask app run with debug=True in command injection lab"
   }
 ]
