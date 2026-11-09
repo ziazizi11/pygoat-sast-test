@@ -1,0 +1,16 @@
+scenario_id,k_tools,tool_combination,total_findings,TP,FP,FN,Precision (%),Recall (%),F1_Score (%)
+SCN-001,1,bandit,0,0,0,19,0.00%,0.00%,0.00%
+SCN-002,1,semgrep,0,0,0,19,0.00%,0.00%,0.00%
+SCN-003,1,bearer,0,0,0,19,0.00%,0.00%,0.00%
+SCN-004,1,codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-005,2,bandit+semgrep,0,0,0,19,0.00%,0.00%,0.00%
+SCN-006,2,bandit+bearer,0,0,0,19,0.00%,0.00%,0.00%
+SCN-007,2,bandit+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-008,2,semgrep+bearer,0,0,0,19,0.00%,0.00%,0.00%
+SCN-009,2,semgrep+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-010,2,bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-011,3,bandit+semgrep+bearer,0,0,0,19,0.00%,0.00%,0.00%
+SCN-012,3,bandit+semgrep+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-013,3,bandit+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-014,3,semgrep+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%
+SCN-015,4,bandit+semgrep+bearer+codeql,0,0,0,19,0.00%,0.00%,0.00%

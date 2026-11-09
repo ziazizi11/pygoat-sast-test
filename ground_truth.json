@@ -1,7 +1,7 @@
 [
   {
     "id": "VULN-001",
-    "file": "settings.py",
+    "file": "pygoat/settings.py",
     "line": 23,
     "cwe": "CWE-798",
     "type": "Hardcoded Credentials",
@@ -9,7 +9,7 @@
   },
   {
     "id": "VULN-002",
-    "file": "settings.py",
+    "file": "pygoat/settings.py",
     "line": 179,
     "cwe": "CWE-798",
     "type": "Hardcoded Credentials",
@@ -17,7 +17,7 @@
   },
   {
     "id": "VULN-003",
-    "file": "views.py",
+    "file": "introduction/views.py",
     "line": 241,
     "cwe": "CWE-330",
     "type": "Weak Cryptography",
@@ -25,7 +25,7 @@
   },
   {
     "id": "VULN-004",
-    "file": "app.py",
+    "file": "challenge/labs/bopla_lab/app.py",
     "line": 48,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
@@ -33,7 +33,7 @@
   },
   {
     "id": "VULN-005",
-    "file": "app.py",
+    "file": "challenge/labs/bopla_lab/app.py",
     "line": 50,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
@@ -41,7 +41,7 @@
   },
   {
     "id": "VULN-006",
-    "file": "app.py",
+    "file": "challenge/labs/bopla_lab/app.py",
     "line": 152,
     "cwe": "CWE-94",
     "type": "Code Execution / Misconfiguration",
@@ -49,7 +49,7 @@
   },
   {
     "id": "VULN-007",
-    "file": "app.py",
+    "file": "challenge/labs/business_logic_lab/app.py",
     "line": 5,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
@@ -57,7 +57,7 @@
   },
   {
     "id": "VULN-008",
-    "file": "app.py",
+    "file": "challenge/labs/business_logic_lab/app.py",
     "line": 200,
     "cwe": "CWE-94",
     "type": "Code Execution / Misconfiguration",
@@ -65,7 +65,7 @@
   },
   {
     "id": "VULN-009",
-    "file": "app.py",
+    "file": "challenge/labs/security_headers_lab/app.py",
     "line": 15,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
@@ -73,7 +73,7 @@
   },
   {
     "id": "VULN-010",
-    "file": "app.py",
+    "file": "challenge/labs/security_headers_lab/app.py",
     "line": 20,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
@@ -81,7 +81,7 @@
   },
   {
     "id": "VULN-011",
-    "file": "app.py",
+    "file": "challenge/labs/security_headers_lab/app.py",
     "line": 233,
     "cwe": "CWE-94",
     "type": "Code Execution / Misconfiguration",
@@ -89,7 +89,7 @@
   },
   {
     "id": "VULN-012",
-    "file": "app.py",
+    "file": "dockerized_labs/sql_injection_lab/app.py",
     "line": 7,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
@@ -97,7 +97,7 @@
   },
   {
     "id": "VULN-013",
-    "file": "app.py",
+    "file": "dockerized_labs/sql_injection_lab/app.py",
     "line": 27,
     "cwe": "CWE-259",
     "type": "Hardcoded Password",
@@ -105,7 +105,7 @@
   },
   {
     "id": "VULN-014",
-    "file": "app.py",
+    "file": "dockerized_labs/sql_injection_lab/app.py",
     "line": 51,
     "cwe": "CWE-89",
     "type": "SQL Injection",
@@ -113,7 +113,7 @@
   },
   {
     "id": "VULN-015",
-    "file": "app.py",
+    "file": "dockerized_labs/sql_injection_lab/app.py",
     "line": 76,
     "cwe": "CWE-94",
     "type": "Code Execution / Misconfiguration",
@@ -121,7 +121,7 @@
   },
   {
     "id": "VULN-016",
-    "file": "app.py",
+    "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 6,
     "cwe": "CWE-798",
     "type": "Hardcoded Secret Key",
@@ -129,7 +129,7 @@
   },
   {
     "id": "VULN-017",
-    "file": "app.py",
+    "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 29,
     "cwe": "CWE-78",
     "type": "Command Injection",
@@ -137,7 +137,7 @@
   },
   {
     "id": "VULN-018",
-    "file": "app.py",
+    "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 49,
     "cwe": "CWE-94",
     "type": "Code Execution",
@@ -145,11 +145,10 @@
   },
   {
     "id": "VULN-019",
-    "file": "app.py",
+    "file": "dockerized_labs/command_injection_lab/app.py",
     "line": 60,
     "cwe": "CWE-94",
     "type": "Code Execution / Misconfiguration",
     "description": "Flask app run with debug=True in command injection lab"
   }
 ]
-

@@ -1,70 +1,102 @@
-name: SAST Evaluation Pipeline (4 Tools)
+name: SAST Multi-Tool Benchmark (4 Tools - PyGoat)
 
 on:
   push:
-    branches: [main, master]
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
-  sast_scan:
+  sast_scans:
+    name: Run 4 SAST Tools & Benchmark Evaluation
     runs-on: ubuntu-latest
     permissions:
       security-events: write
-      actions: read
       contents: read
+      actions: read
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      # --- TOOL 1: SEMGREP ---
-      - name: Run Semgrep
-        run: |
-          pip install semgrep
-          semgrep scan --config=auto --sarif --output=semgrep-results.json . || true
+      - name: Create Results Directory
+        run: mkdir -p sast-results
 
-      # --- TOOL 2: BANDIT ---
+      # ----------------------------------------------------
+      # 1. Bandit Scan (AST Pattern Matching)
+      # ----------------------------------------------------
       - name: Run Bandit
+        continue-on-error: true
         run: |
           pip install bandit
-          bandit -r . -f json -o bandit-results.json || true
+          bandit -r . -f json -o sast-results/bandit.json || true
+          echo "Bandit scan finished."
 
-      # --- TOOL 3: CODEQL ---
+      # ----------------------------------------------------
+      # 2. Semgrep Scan (Modern Rule-Based & Taint Analysis)
+      # ----------------------------------------------------
+      - name: Run Semgrep
+        continue-on-error: true
+        run: |
+          pip install semgrep
+          semgrep scan --config auto --json -o sast-results/semgrep.json . || true
+          echo "Semgrep scan finished."
+
+      # ----------------------------------------------------
+      # 3. Bearer CLI Scan (API & Data Flow Security)
+      # ----------------------------------------------------
+      - name: Run Bearer
+        continue-on-error: true
+        run: |
+          curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh
+          ./bin/bearer scan . --format json --output sast-results/bearer.json || true
+          echo "Bearer scan finished."
+
+      # ----------------------------------------------------
+      # 4. CodeQL Scan (Advanced Semantic Analysis)
+      # ----------------------------------------------------
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
+        continue-on-error: true
         with:
-          languages: 'python'
-          output: 'codeql-results'
+          languages: python
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        continue-on-error: true
         with:
-          output: 'codeql-results'
+          output: sast-results/codeql-sarif-dir
 
-      - name: Copy CodeQL Result
+      - name: Prepare CodeQL SARIF
+        continue-on-error: true
         run: |
-          cp codeql-results/python.sarif codeql-results.sarif || cp ../results/python.sarif codeql-results.sarif || true
+          if [ -f "sast-results/codeql-sarif-dir/python.sarif" ]; then
+            cp sast-results/codeql-sarif-dir/python.sarif sast-results/codeql.sarif
+          fi
 
-      # --- TOOL 4: SONARQUBE / SONARSCANNER ---
-      - name: Run SonarQube Scanner
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          npx sonarqube-scanner \
-            -Dsonar.projectKey=pygoat \
-            -Dsonar.sources=. \
-            -Dsonar.exclusions=**/templates/**,**/scripts/** \
-            -Dsonar.sarif.reportPaths=sonarqube-results.json || true
-
-      # --- EVALUASI OTOMATIS CONFUSION MATRIX ---
+      # ----------------------------------------------------
+      # EVALUATION: Compute TP, FP, FN, Precision, Recall, F1 for 15 Combinations
+      # ----------------------------------------------------
       - name: Run Evaluation Script
         run: |
-          python scripts/evaluate.py --mode 4
+          python scripts/evaluate.py
+
+      # ----------------------------------------------------
+      # Upload Results & Artifacts
+      # ----------------------------------------------------
+      - name: Upload SAST Reports & CSV Summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sast-evaluation-results
+          path: |
+            sast_evaluation_summary.csv
+            sast-results/
